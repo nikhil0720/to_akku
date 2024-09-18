@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Box Reveal</title>
+    <style>
+        body { margin: 0; }
+        canvas { display: block; }
+    </style>
+</head>
+<body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+    // Scene, Camera, Renderer
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(renderer.domElement);
+
+    // Load a texture (your selected photo)
+    const textureLoader = new THREE.TextureLoader();
+    const selectedPhotoTexture = textureLoader.load('C:\Users\KIIT\Downloads\_0033d074-6c9c-495f-b833-7e8ac5780154.jpeg');
+
+    // Create a box with the texture on one face
+    const boxGeometry = new THREE.BoxGeometry(2, 2, 2);
+    const materials = [
+        new THREE.MeshBasicMaterial({ color: 0x0000ff }), // blue side
+        new THREE.MeshBasicMaterial({ color: 0x00ff00 }), // green side
+        new THREE.MeshBasicMaterial({ color: 0xff0000 }), // red side
+        new THREE.MeshBasicMaterial({ color: 0xffff00 }), // yellow side
+        new THREE.MeshBasicMaterial({ map: selectedPhotoTexture }), // the front side with your photo
+        new THREE.MeshBasicMaterial({ color: 0xff00ff }), // magenta side
+    ];
+    const box = new THREE.Mesh(boxGeometry, materials);
+    scene.add(box);
+
+    // Set the camera position
+    camera.position.z = 5;
+
+    // Animation to open the box (rotating the top face)
+    let boxOpenAngle = 0;
+    function animate() {
+        requestAnimationFrame(animate);
+
+        // Open the box by rotating the top face (rotate about the X-axis)
+        if (boxOpenAngle < Math.PI / 2) {
+            box.rotation.x += 0.01; // adjust this value to control speed
+            boxOpenAngle += 0.01;
+        }
+
+        renderer.render(scene, camera);
+    }
+    animate();
+
+    // Adjust when window is resized
+    window.addEventListener('resize', () => {
+        const width = window.innerWidth;
+        const height = window.innerHeight;
+        renderer.setSize(width, height);
+        camera.aspect = width / height;
+        camera.updateProjectionMatrix();
+    });
+</script>
+</body>
+</html>
